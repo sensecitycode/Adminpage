@@ -2,7 +2,7 @@ var appServices = angular.module('administrationApp.services', []);
 
 appServices.factory('BugzillaEndPointService', function() {
 	  return {
-		  bugzillaURL: "http://localhost:3001/bugs/search"
+		  bugzillaURL: "http://api.sense.city:3001/bugs/search"
 	  };
 });
 
