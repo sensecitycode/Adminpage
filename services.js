@@ -6,7 +6,7 @@ appServices.factory('BugzillaEndPointService', function() {
 	  };
 });
 
-appServices.factory('DisplayBugService', function ( $resource, BugzillaEndPointService) {
+appServices.factory('BugService', function ( $resource, BugzillaEndPointService) {
     return $resource(
         BugzillaEndPointService.bugzillaURL,
         null,
@@ -76,12 +76,37 @@ appServices.factory('ToGrService', function() {
 									break;
 							}
 							_status = "Ολοκληρωμένο";
-							
+
 							break;
 						default:
 							break;
 					}
-					return {"new_status":_status,"status_style":_style,"status_icon":_icon,"new_resolution":_resolution};
+					return {"status":{"en":status,"gr":_status},"status_style":_style,"status_icon":_icon,"resolution":{"en":resolution,"gr":_resolution}};
+
+				}
+    };
+});
+
+
+appServices.factory('CommentService', function() {
+    return {
+				field: function(status) {
+					var field;
+					var comment;
+					switch(status){
+						case "CONFIRMED":
+							field = "url";
+							break;
+						case "IN_PROGRESS":
+							field = "whiteboard";
+							break;
+						case "RESOLVED":
+							field = "cf_sensecityissue";
+							break;
+						default:
+							break;
+					}
+					return field;
 
 				}
     };
