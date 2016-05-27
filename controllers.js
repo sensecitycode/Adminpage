@@ -97,14 +97,16 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
       $scope.selectedResolution = null;
     };
 
-    $scope.submit = function(panel){
-      console.log($scope);
-      console.log("$scope.selectedstatus");
-      console.log($scope.selectedstatus);
+    $scope.submit = function(panel,seldstatus){
+      console.log(panel.title);
+      console.log("seldstatus");
+      console.log(seldstatus);
       console.log("$scope.selectedResolution");
       console.log($scope.selectedResolution);
       console.log("$scope.comment");
       console.log($scope.comment);
+	  
+	  panel.status = seldstatus;
       panel.admin=false;
       // var obj  =
       // {

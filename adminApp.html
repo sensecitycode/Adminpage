@@ -51,6 +51,7 @@
                 <strong>BEBUGGING</strong>
                 <br />admin: {{panel.admin}}
                 <br />resolutionbtn: {{selectedStatus=='Ολοκληρωμένο'}}
+				<br />status: {{panel.status}}
                 <br />selectedstatus: {{selectedStatus}}
                 <br />selectedResolution: {{selectedResolution}}
                 <br />comment: {{comment}}
@@ -68,6 +69,7 @@
                   <div>
                     <a href="{{panel.issuelink}}">Επισκόπηση</a>
                   </div>
+				   <div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
                 </form>
 
                 <form name="editingForm"  ng-show="panel.admin">
@@ -82,13 +84,14 @@
                     <span class="title">Σχόλιο: </span>
                     <input type="text" class="form-control" ng-model="comment" placeholder="περιγραφή ...">
                   </div>
+				   <div class="btn btn-success" ng-show="panel.admin" ng-click="submit(panel,selectedStatus)" ><span class="glyphicon glyphicon-ok"></span> Επιβεβαίωση</div>
+					<div class="btn btn-danger" ng-show="panel.admin" ng-click="resetPanel(panel)" ><span class="glyphicon glyphicon-remove"></span> Ακύρωση</div>
                 </form>
 
                 <br />
 
-                <div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
-                <div class="btn btn-success" ng-show="panel.admin" ng-click="submit(panel)" ><span class="glyphicon glyphicon-ok"></span> Επιβεβαίωση</div>
-                <div class="btn btn-danger" ng-show="panel.admin" ng-click="resetPanel(panel)" ><span class="glyphicon glyphicon-remove"></span> Ακύρωση</div>
+               
+               
               </div>
             </div>
           </div>
