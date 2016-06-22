@@ -152,7 +152,7 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
         "id": 1
       };
       console.log(body);
-      BugService.search(body, function(result) {
+      BugService.update(body, function(result) {
         console.log(result);
       });
 

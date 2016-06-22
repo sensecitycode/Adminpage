@@ -15,6 +15,11 @@ appServices.factory('BugService', function ( $resource, BugzillaEndPointService)
             method: 'POST',
             headers:{'Content-Type':'application/json'},
             isArray: true
+          },
+		  update: {
+            method: 'POST',
+            headers:{'Content-Type':'application/json'},
+            isArray: false
           }
         }
     );
