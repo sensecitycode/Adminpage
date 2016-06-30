@@ -1,24 +1,90 @@
 var appControllers = angular.module('administrationApp.controllers', []);
 
 
-appControllers.controller('adminController',['$scope','$window','$http','BugzillaEndPointService','BugService','ToGrService','CommentService', function($scope,$window,$http,BugzillaEndPointService,BugService,ToGrService,CommentService){
+appControllers.controller('adminController',['$scope','$window','$http','EndPointService','BugService','ToGrService','CommentService','Issue2MapService','Tab2BugzillaService', function($scope,$window,$http,EndPointService,BugService,ToGrService,CommentService,Issue2MapService,Tab2BugzillaService){
+    $scope.tabs = [
+      {
+        "title": "Γενικά",
+        "content": "Παρουσίαση όλων των δηλωμένων προβλημάτων"
+      },
+      {
+        "title": "Καθαριότητα",
+        "content": "Παρουσίαση προβλημάτων καθαριότητας",
+      },
+      {
+        "title": "Φωτισμός",
+        "content": "Παρουσίαση προβλημάτων φωτισμού",
+      },
+      {
+        "title": "Ύδρευση",
+        "content": "Παρουσίαση προβλημάτων ύδρευσης/αποχέτευσης",
+      },
+      {
+        "title": "Οδόστρωμα",
+        "content": "Παρουσίαση προβλημάτων οδοστρώματος",
+      }
+    ];
+    $scope.tabs.activeTab = "Καθαριότητα";
+
     $scope.panels = [];
-    $scope.multipleActivePanels = [];
+    // $scope.multipleActivePanels = [];
+    $scope.activePanel = [];
     moment.locale('el');
 
+    $scope.center= {
+        lat: 38.248028,
+        lng: 21.7583104,
+        zoom: 12
+    };
+
+    $scope.defaults = {
+      scrollWheelZoom:false
+    };
+
+    $scope.layers= {
+        baselayers: {
+            openStreetMap: {
+                name: 'OpenStreetMap',
+                type: 'xyz',
+                url: 'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                layerOptions: {
+                    showOnSelector: false,
+                    attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
+                }
+            }
+        }
+    };
+
+    var redMarker = {
+            type: 'awesomeMarker',
+            icon: 'info-circle',
+            prefix: 'fa',
+            markerColor: 'red'
+            };
+
+
     var pageload = function(callback) {
+      var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
+      // console.log(issue_type);
+      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      if (issue_type!="all")
+        {
+          params.summary = issue_type;
+        }
+      // console.log(params);
       var obj =
-      {
-          "method": "Bug.search",
-          "params": [{"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","resolution"]}],
-          "id": 1
-      };
+        {
+            "method": "Bug.search",
+            "params": [params],
+            "id": 1
+        };
+      // console.log(obj);
       BugService.search(obj, function(result) {
 
         angular.forEach(result, function(value,key) {
           var issue_name = ToGrService.issueName(value.summary);
           var panelTitle = ToGrService.statusTitle(value.status,value.resolution);
-
+          var description = CommentService.field(value.status);
           var id = value.id;
           var issuelink = "http://sense.city/issuemap.php?issue_id="+value.alias;
           var creation_time = value.creation_time;
@@ -28,12 +94,11 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
           var panel =
           {
             "title":"Πρόβλημα #"+id+" ("+issue_name+") -- "+time_fromNow,
-
             "style":panelTitle.status_style,
             "icon":panelTitle.status_icon,
             "time":local_time,
             "issuelink":issuelink,
-
+            "issuename":issue_name,
             "id":id,
             "status":panelTitle.status,
             "new_status":"",
@@ -41,35 +106,41 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
             "new_resolution":"",
             "admin":false,
             "ArrayID":key,
-            "comment":null
-
+            "comment":value[description],
+            "initialdesc":value.url,
+            "mongoId":value.alias
           };
           this.push(panel);
         }, $scope.panels);
       });
-
     };
-
 
     pageload(function(callback){
     });
 
-    // $scope.$watch(
-    // function( $scope ) {
-    //     console.log( "Function watched" );
-    //     // This becomes the value we're "watching".
-    //     return(  $scope.selectedStatus );
-    // },
-    // function( newValue ) {
-    //     console.log("new");
-    //     console.log( newValue );
-    //     return(  newValue );
-    // }
-    // );
+    $scope.linkmap = function(panel){
+      $scope.markers = [];
+      // console.log(panel);
+      // console.log(panel.mongoId);
+      // console.log(panel.mongoId[0]);
+      $scope.panel_issue = panel.issuename;
+      $scope.initial_desc = panel.initialdesc;
+      Issue2MapService.get({issueID:panel.mongoId[0]}, function(issue) {
+        $scope.panel_image = issue.image_name;
+        $scope.center = {lat:issue.loc.coordinates[1],lng:issue.loc.coordinates[0],zoom:17};
+        $scope.markers = [{"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":redMarker}];
+      });
+    };
+
     $scope.admin = function(panel){
       // $scope.initResetPanel(panel);
+      $scope.selectedStatus = null;
+      $scope.selectedResolution = null;
+      $scope.comment =null;
+      console.log($scope.selectedStatus + $scope.selectedResolution + $scope.comment);
+      console.log(panel);
       panel.admin = true;
-      $scope.multipleActivePanels = [panel.ArrayID];
+      // $scope.multipleActivePanels = [panel.ArrayID];
 
       $scope.statuses = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτελέση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
       $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Μη αποδεκτό","en":"INVALID"},{"gr":"Μη αποκατάσταση","en":"WONTFIX"},{"gr":"Διπλοεγγραφή","en":"DUPLICATE"}];
@@ -90,28 +161,23 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
       $scope.selectedResolution = null;
     };
 
-    $scope.resetPanel = function(panel,seldstatus,seldResolution,seldcomment){
+    $scope.resetPanel = function(panel){
       console.log("before");
-      console.log(seldstatus);
-      console.log(seldResolution);
-      console.log(seldcomment);
+      console.log($scope.selectedStatus);
+      console.log($scope.selectedResolution);
+      console.log($scope.comment);
       panel.admin = false;
-      seldcomment = {};
-      seldstatus = {};
-      seldResolution = {};
+      $scope.selectedStatus = null;
+      $scope.selectedResolution = null;
+      $scope.comment =null;
 
       console.log("after");
-      console.log(seldstatus);
-      console.log(seldResolution);
-      console.log(seldcomment);
-
-
+      console.log($scope.selectedStatus);
+      console.log($scope.selectedResolution);
+      console.log($scope.comment);
     };
 
     $scope.submit = function(panel,seldstatus,seldResolution,seldcomment){
-      var panelTitle = ToGrService.statusTitle(seldstatus.en,seldResolution.en);
-      panel.style = panelTitle.status_style;
-      panel.icon = panelTitle.status_icon;
 
 	    panel.status = seldstatus;
       if (panel.status.en == "RESOLVED")
@@ -152,7 +218,10 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
         "id": 1
       };
       console.log(body);
-      BugService.update(body, function(result) {
+      BugService.search(body, function(result) {
+        var panelTitle = ToGrService.statusTitle(seldstatus.en,seldResolution.en);
+        panel.style = panelTitle.status_style;
+        panel.icon = panelTitle.status_icon;
         console.log(result);
       });
 
@@ -162,19 +231,27 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
 
     $scope.refresh=function(){
       $scope.panels = [];
-
+      var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
+      // console.log(issue_type);
+      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      if (issue_type!="all")
+        {
+          params.summary = issue_type;
+        }
+      // console.log(params);
       var obj =
-      {
-          "method": "Bug.search",
-          "params": [{"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","resolution"]}],
-          "id": 1
-      };
-      DisplayBugService.search(obj, function(result) {
+        {
+            "method": "Bug.search",
+            "params": [params],
+            "id": 1
+        };
+      // console.log(obj);
+      BugService.search(obj, function(result) {
 
         angular.forEach(result, function(value,key) {
           var issue_name = ToGrService.issueName(value.summary);
           var panelTitle = ToGrService.statusTitle(value.status,value.resolution);
-
+          var description = CommentService.field(value.status);
           var id = value.id;
           var issuelink = "http://sense.city/issuemap.php?issue_id="+value.alias;
           var creation_time = value.creation_time;
@@ -184,12 +261,11 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
           var panel =
           {
             "title":"Πρόβλημα #"+id+" ("+issue_name+") -- "+time_fromNow,
-
             "style":panelTitle.status_style,
             "icon":panelTitle.status_icon,
             "time":local_time,
             "issuelink":issuelink,
-
+            "issuename":issue_name,
             "id":id,
             "status":panelTitle.status,
             "new_status":"",
@@ -197,15 +273,14 @@ appControllers.controller('adminController',['$scope','$window','$http','Bugzill
             "new_resolution":"",
             "admin":false,
             "ArrayID":key,
-            "comment":null
-
+            "comment":value[description],
+            "initialdesc":value.url,
+            "mongoId":value.alias
           };
           this.push(panel);
         }, $scope.panels);
       });
 
+
     };
-
-
-
 }]);

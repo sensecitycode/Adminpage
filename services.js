@@ -1,29 +1,33 @@
 var appServices = angular.module('administrationApp.services', []);
 
-appServices.factory('BugzillaEndPointService', function() {
+appServices.factory('EndPointService', function() {
 	  return {
-		  bugzillaURL: "http://api.sense.city:3001/bugs/search"
+		  bugzillaURL: "http://api.sense.city:3001/bugs/search",
+			APIURL: "http://api.sense.city:3000/api"
 	  };
 });
 
-appServices.factory('BugService', function ( $resource, BugzillaEndPointService) {
+appServices.factory('BugService', function ( $resource, EndPointService) {
     return $resource(
-        BugzillaEndPointService.bugzillaURL,
+        EndPointService.bugzillaURL,
         null,
         {
           search: {
             method: 'POST',
             headers:{'Content-Type':'application/json'},
             isArray: true
-          },
-		  update: {
-            method: 'POST',
-            headers:{'Content-Type':'application/json'},
-            isArray: false
           }
         }
     );
 });
+
+appServices.factory('Issue2MapService', function ( $resource, EndPointService) {
+    // console.log("DisplayIssues");
+    return $resource(EndPointService.APIURL+'/fullissue/:issueID',
+        {issueID:'@id'}
+			);
+});
+
 
 appServices.factory('ToGrService', function() {
     return {
@@ -92,7 +96,6 @@ appServices.factory('ToGrService', function() {
     };
 });
 
-
 appServices.factory('CommentService', function() {
     return {
 				field: function(status) {
@@ -115,4 +118,30 @@ appServices.factory('CommentService', function() {
 
 				}
     };
+});
+
+appServices.factory('Tab2BugzillaService', function(){
+	return{
+		issue_type: function(tab) {
+			var type;
+			switch (tab) {
+				case "Γενικά":
+					type="all";
+					break;
+				case "Καθαριότητα":
+					type="garbage";
+					break;
+				case "Φωτισμός":
+					type="lighting";
+					break;
+				case "Ύδρευση":
+					type="plumbing";
+					break;
+				case "Οδόστρωμα":
+					type="road-contructor";
+					break;
+			}
+			return type;
+		}
+	};
 });
