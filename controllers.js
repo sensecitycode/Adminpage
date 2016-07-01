@@ -33,6 +33,15 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
     $scope.closedissues=false;
 
+    $scope.ALLcenter= {
+      lat: 38.248028,
+      lng: 21.7583104,
+      zoom: 12
+    };
+
+
+    $scope.ALLmarkers=[];
+
     $scope.center= {
         lat: 38.248028,
         lng: 21.7583104,
@@ -52,7 +61,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
                 layerOptions: {
                     showOnSelector: false,
                     attribution: '© <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="http://mapbox.com">Mapbox</a>'
-                }
+                },
             }
         }
     };
@@ -63,9 +72,54 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             prefix: 'fa',
             markerColor: 'red'
             };
+        var icons = {
+          garbage: {
+            type: 'awesomeMarker',
+            prefix: 'fa',
+            icon: 'trash-o',
+            markerColor: 'red'
+          },
+          "road-contructor": {
+            type: 'awesomeMarker',
+            prefix: 'fa',
+            icon: 'road',
+            markerColor: 'red'
+          },
+          plumbing: {
+            type: 'awesomeMarker',
+            prefix: 'fa',
+            icon: 'umbrella',
+            markerColor: 'red'
+          },
+          lighting: {
+            type: 'awesomeMarker',
+            prefix: 'fa',
+            icon: 'lightbulb-o',
+            markerColor: 'red'
+          }
+      };
+      $scope.$on("leafletDirectiveMarker.issuesmap.click", function(event, args){
+          // Args will contain the marker name and other relevant information
+          // console.log("Leaflet Click");
+          // console.log(args);
+          // console.log(args.model.panelid);
+          // console.log($scope.panels[args.model.panelid]);
+          $scope.activePanel = [args.model.panelid];
+          $scope.linkmap($scope.panels[args.model.panelid]);
+      });
+
+      $scope.$on("leafletDirectiveMarker.panelmap.click", function(event, args){
+          // Args will contain the marker name and other relevant information
+          // console.log("Leaflet Click");
+          // console.log(args);
+          // console.log(args.model.panelid);
+          // console.log($scope.panels[args.model.panelid]);
+          $scope.activePanel = [-1];
+          // $scope.linkmap($scope.panels[args.model.panelid]);
+      });
 
 
-    var pageload = function(callback) {
+      var pageload = function(callback) {
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
       var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","status": ["CONFIRMED", "IN_PROGRESS"],"include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
@@ -95,12 +149,13 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
           var panel =
           {
-            "title":"Πρόβλημα #"+id+" ("+issue_name+") -- "+time_fromNow,
+            "title":"#"+id+" ("+issue_name+") -- "+time_fromNow,
             "style":panelTitle.status_style,
             "icon":panelTitle.status_icon,
             "time":local_time,
             "issuelink":issuelink,
-            "issuename":issue_name,
+            "issuenameGR":issue_name,
+            "issuenameEN":value.summary,
             "id":id,
             "status":panelTitle.status,
             "new_status":"",
@@ -113,6 +168,13 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             "mongoId":value.alias
           };
           this.push(panel);
+          Issue2MapService.get({issueID:panel.mongoId[0]}, function(issue) {
+            // $scope.panel_image = issue.image_name;
+            // $scope.center = {lat:issue.loc.coordinates[1],lng:issue.loc.coordinates[0],zoom:17};
+            $scope.ALLmarkers.push({"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":icons[panel.issuenameEN],"panelid":panel.ArrayID});
+          });
+
+
         }, $scope.panels);
       });
     };
@@ -121,16 +183,18 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
     });
 
     $scope.linkmap = function(panel){
+      // console.log(panel);
+
       $scope.markers = [];
       // console.log(panel);
       // console.log(panel.mongoId);
       // console.log(panel.mongoId[0]);
-      $scope.panel_issue = panel.issuename;
+      $scope.panel_issue = panel.issuenameGR;
       $scope.initial_desc = panel.initialdesc;
       Issue2MapService.get({issueID:panel.mongoId[0]}, function(issue) {
         $scope.panel_image = issue.image_name;
         $scope.center = {lat:issue.loc.coordinates[1],lng:issue.loc.coordinates[0],zoom:17};
-        $scope.markers = [{"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":redMarker}];
+        $scope.markers = [{"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":icons[panel.issuenameEN]}];
       });
     };
 
@@ -139,8 +203,8 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       $scope.selectedStatus = null;
       $scope.selectedResolution = null;
       $scope.comment =null;
-      console.log($scope.selectedStatus + $scope.selectedResolution + $scope.comment);
-      console.log(panel);
+      // console.log($scope.selectedStatus + $scope.selectedResolution + $scope.comment);
+      // console.log(panel);
       panel.admin = true;
       // $scope.multipleActivePanels = [panel.ArrayID];
 
@@ -164,7 +228,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
     };
 
     $scope.resetPanel = function(panel){
-      console.log("before");
+      console.log("BEFORE:");
       console.log($scope.selectedStatus);
       console.log($scope.selectedResolution);
       console.log($scope.comment);
@@ -173,7 +237,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       $scope.selectedResolution = null;
       $scope.comment =null;
 
-      console.log("after");
+      console.log("AFTER:");
       console.log($scope.selectedStatus);
       console.log($scope.selectedResolution);
       console.log($scope.comment);
@@ -199,19 +263,21 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
 
       var bug_fieldname = CommentService.field(panel.status.en);
-      console.log(bug_fieldname);
-      console.log(panel);
+      // console.log(bug_fieldname);
+      // console.log(panel);
 
       var obj = { "ids":panel.id,"status":panel.status.en,"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων"};
-      if (panel.comment !== undefined)
+      if (panel.comment !== undefined && bug_fieldname!== undefined)
       {
         obj[bug_fieldname] = panel.comment;
+        console.log(bug_fieldname);
+        console.log(obj[bug_fieldname]);
       }
       if (panel.status.en == "RESOLVED")
       {
         obj.resolution = panel.resolution.en;
       }
-      console.log(obj);
+      // console.log(obj);
 
       var body  =
       {
@@ -219,12 +285,14 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
         "params": [obj],
         "id": 1
       };
-      console.log(body);
+      // console.log(body);
       BugService.search(body, function(result) {
         var panelTitle = ToGrService.statusTitle(seldstatus.en,seldResolution.en);
         panel.style = panelTitle.status_style;
         panel.icon = panelTitle.status_icon;
+        console.log("Result:");
         console.log(result);
+        // $scope.refresh();
       });
 
     };
@@ -233,6 +301,8 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
     $scope.refresh=function(){
       $scope.panels = [];
+      $scope.ALLmarkers=[];
+
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
       var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
@@ -245,7 +315,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       {
         params.status = ["CONFIRMED", "IN_PROGRESS"];
       }
-      console.log(params);
+      // console.log(params);
       var obj =
         {
             "method": "Bug.search",
@@ -267,12 +337,13 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
           var panel =
           {
-            "title":"Πρόβλημα #"+id+" ("+issue_name+") -- "+time_fromNow,
+            "title":"#"+id+" ("+issue_name+") -- "+time_fromNow,
             "style":panelTitle.status_style,
             "icon":panelTitle.status_icon,
             "time":local_time,
             "issuelink":issuelink,
-            "issuename":issue_name,
+            "issuenameGR":issue_name,
+            "issuenameEN":value.summary,
             "id":id,
             "status":panelTitle.status,
             "new_status":"",
@@ -285,7 +356,14 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             "mongoId":value.alias
           };
           this.push(panel);
+          Issue2MapService.get({issueID:panel.mongoId[0]}, function(issue) {
+            // $scope.panel_image = issue.image_name;
+            // $scope.center = {lat:issue.loc.coordinates[1],lng:issue.loc.coordinates[0],zoom:17};
+            $scope.ALLmarkers.push({"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":icons[panel.issuenameEN],"panelid":panel.ArrayID});
+          });
+
         }, $scope.panels);
+
       });
 
 

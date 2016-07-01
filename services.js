@@ -103,7 +103,7 @@ appServices.factory('CommentService', function() {
 					var comment;
 					switch(status){
 						case "CONFIRMED":
-							field = "url";
+							// field = "url";
 							break;
 						case "IN_PROGRESS":
 							field = "whiteboard";

@@ -129,6 +129,12 @@
           </div>
         </div>
 
+        <div  class="col-md-6" ng-if="activePanel==-1">
+          <h3>Επισκόπηση Προβλημάτων ({{tabs.activeTab}})</h3>
+          <leaflet id="issuesmap" lf-center="ALLcenter" layers="layers" markers="ALLmarkers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
+        </div>
+
+
         <div  class="col-md-6" ng-if="activePanel!=-1">
           <h3  ng-bind="panel_issue"></h3>
           <leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
@@ -137,6 +143,7 @@
           <br />
           <img ng-src="{{panel_image}}" width="400px" alt="No image available" />
         </div>
+
 
       </div>
 
