@@ -66,7 +66,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
     var pageload = function(callback) {
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
-      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
         {
           params.summary = issue_type;
@@ -233,7 +233,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       $scope.panels = [];
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
-      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
         {
           params.summary = issue_type;
