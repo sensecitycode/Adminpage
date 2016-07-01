@@ -60,6 +60,11 @@
       <div class="container" style="background-color:lightgray">
 
         <div class="panel-group col-md-6" ng-model="activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+          <center>
+            <div class="checkbox">
+                <input ng-model="closedissues" type="checkbox" ng-click="refresh()"> Εμφάνιση ολοκληρωμένων προβλημάτων
+            </div>
+          </center>
           <div class="panel panel-default" ng-repeat="panel in panels">
         <!-- <div class="panel-group" ng-model="multipleActivePanels" data-allow-multiple="true" role="tablist" aria-multiselectable="false" bs-collapse>
           <div class="panel panel-default" ng-repeat="panel in panels" > -->

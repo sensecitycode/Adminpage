@@ -31,6 +31,8 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
     $scope.activePanel = [];
     moment.locale('el');
 
+    $scope.closedissues=false;
+
     $scope.center= {
         lat: 38.248028,
         lng: 21.7583104,
@@ -66,7 +68,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
     var pageload = function(callback) {
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
-      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","status": ["CONFIRMED", "IN_PROGRESS"],"include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
         {
           params.summary = issue_type;
@@ -235,10 +237,15 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       // console.log(issue_type);
       var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
-        {
-          params.summary = issue_type;
-        }
+      {
+        params.summary = issue_type;
+      }
       // console.log(params);
+      if ($scope.closedissues===false)
+      {
+        params.status = ["CONFIRMED", "IN_PROGRESS"];
+      }
+      console.log(params);
       var obj =
         {
             "method": "Bug.search",
