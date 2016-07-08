@@ -77,16 +77,16 @@
             </div>
             <div class="panel-collapse" role="tabpanel" data-animation="am-collapse" bs-collapse-target>
               <div class="panel-body">
-                <strong>BEBUGGING</strong>
+                <!-- <strong>BEBUGGING</strong> -->
                 <!-- <br />admin: {{panel.admin}}
                 <br />resolutionbtn: {{selectedStatus.en=='RESOLVED'}} -->
-				        <br />status: {{panel.status}}
+				        <!-- <br />status: {{panel.status}}
                 <br />selectedstatus: {{selectedStatus}}
                 <br />Resolution: {{panel.resolution}}
                 <br />selectedResolution: {{selectedResolution}}
                 <br />comment: {{panel.comment}}
                 <br />selectedcomment: {{comment}}
-                <hr />
+                <hr /> -->
                 <!-- <p ng-bind-html="panel.body"></p> -->
                 <form name="editableForm" ng-hide="panel.admin">
                   <div>
@@ -102,9 +102,9 @@
                     <span class="title">Περιγραφή Υπηρεσίας: </span>
                     <span >{{ panel.comment }}</span>
                   </div>
-                  <div>
+                 <!--  <div>
                     <a href="#panelmap">Επισκόπηση</a>
-                  </div>
+                  </div> -->
 				          <div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
                 </form>
 
@@ -124,6 +124,10 @@
         					<div class="btn btn-danger" ng-show="panel.admin" ng-click="resetPanel(panel)" ><span class="glyphicon glyphicon-remove"></span> Ακύρωση</div>
                 </form>
                 <br />
+				<hr />
+				  <h3>{{initial_desc}}</h3>
+				  <br />
+				  <img ng-src="{{panel_image}}" width="400px" alt="No image available" />
               </div>
             </div>
           </div>
@@ -137,11 +141,7 @@
 
         <div  class="col-md-6" ng-if="activePanel!=-1">
           <h3  ng-bind="panel_issue"></h3>
-          <leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
-          <hr />
-          <h3>{{initial_desc}}</h3>
-          <br />
-          <img ng-src="{{panel_image}}" width="400px" alt="No image available" />
+          <leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="650px"  style="color:black;"></leaflet>
         </div>
 
 
