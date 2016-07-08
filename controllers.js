@@ -208,7 +208,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       panel.admin = true;
       // $scope.multipleActivePanels = [panel.ArrayID];
 
-      $scope.statuses = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτελέση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
+      $scope.statuses = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτέλεση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
       $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Μη αποδεκτό","en":"INVALID"},{"gr":"Μη αποκατάσταση","en":"WONTFIX"},{"gr":"Διπλοεγγραφή","en":"DUPLICATE"}];
 
       $scope.selectedStatus = panel.status;
