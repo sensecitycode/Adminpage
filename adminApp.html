@@ -3,12 +3,11 @@
     <head>
         <meta charset="utf-8">
         <meta name="description" content="sense.city" />
-      <!-- based on a free Bootstrap landing page theme created for BootstrapZero. Feature video background and one page design. -->
+		<!-- based on a free Bootstrap landing page theme created for BootstrapZero. Feature video background and one page design. -->
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="generator" content="Codeply">
 
         <title>sense.city administration</title>
-
 
         <!-- angular dep -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.3/angular.js"></script>
@@ -17,7 +16,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-sanitize.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.3/angular-animate.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/angular-motion/0.4.4/angular-motion.css" />
-
 
         <!-- angular strap -->
         <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
@@ -40,112 +38,82 @@
         <link rel="stylesheet" href="css/leaflet.css" />
         <link rel="stylesheet" href="css/leaflet.awesome-markers.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
-
     </head>
-
     <body ng-app="administrationApp" ng-controller="adminController" ng-init="">
+		<div bs-active-pane="tabs.activeTab" bs-tabs ng-click="refresh()">
+			<div ng-repeat="tab in tabs" data-title="{{ tab.title }}" name="{{ tab.title }}" ng-bind="tab.content"  bs-pane></div>
+		</div>
+		<hr />
 
+		<center>
+			<div class="btn btn-default" ng-click="refresh()">Ανανέωση</div>
+		</center>
 
-      <div bs-active-pane="tabs.activeTab" bs-tabs ng-click="refresh()">
-        <div ng-repeat="tab in tabs" data-title="{{ tab.title }}" name="{{ tab.title }}" ng-bind="tab.content"  bs-pane>
-        </div>
-      </div>
-      <hr />
-
-      <center>
-        <div class="btn btn-default" ng-click="refresh()">Ανανέωση</div>
-      </center>
-
-
-      <div class="container" style="background-color:lightgray">
-
-        <div class="panel-group col-md-6" ng-model="activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
-          <center>
-            <div class="checkbox">
-                <input ng-model="closedissues" type="checkbox" ng-click="refresh()"> Εμφάνιση ολοκληρωμένων προβλημάτων
-            </div>
-          </center>
-          <div class="panel panel-default" ng-repeat="panel in panels">
-        <!-- <div class="panel-group" ng-model="multipleActivePanels" data-allow-multiple="true" role="tablist" aria-multiselectable="false" bs-collapse>
-          <div class="panel panel-default" ng-repeat="panel in panels" > -->
-            <div class="panel-heading" role="tab" >
-              <h3 class="panel-title" ng-click="activePanel!=-1 && linkmap(panel)" >
-                <a bs-collapse-toggle>
-                  <span ng-class="panel.icon" ng-style="panel.style" ></span> {{ panel.title }}
-                </a>
-              </h3>
-            </div>
-            <div class="panel-collapse" role="tabpanel" data-animation="am-collapse" bs-collapse-target>
-              <div class="panel-body">
-                <!-- <strong>BEBUGGING</strong> -->
-                <!-- <br />admin: {{panel.admin}}
-                <br />resolutionbtn: {{selectedStatus.en=='RESOLVED'}} -->
-				        <!-- <br />status: {{panel.status}}
-                <br />selectedstatus: {{selectedStatus}}
-                <br />Resolution: {{panel.resolution}}
-                <br />selectedResolution: {{selectedResolution}}
-                <br />comment: {{panel.comment}}
-                <br />selectedcomment: {{comment}}
-                <hr /> -->
-                <!-- <p ng-bind-html="panel.body"></p> -->
-                <form name="editableForm" ng-hide="panel.admin">
-                  <div>
-                    <span class="title">Κατάσταση: </span>
-                    <span>{{panel.status.gr}}</span>
-                    <span ng-show="panel.status.en=='RESOLVED'"> ({{panel.resolution.gr}})</span>
-                  </div>
-                  <div>
-                    <span class="title">Καταγραφη: </span>
-                    <span >{{ panel.time }}</span>
-                  </div>
-                  <div>
-                    <span class="title">Περιγραφή Υπηρεσίας: </span>
-                    <span >{{ panel.comment }}</span>
-                  </div>
-                 <!--  <div>
-                    <a href="#panelmap">Επισκόπηση</a>
-                  </div> -->
-				          <div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
-                </form>
-
-                <form name="editingForm"  ng-show="panel.admin">
-                  <div>
-                    <span class="title">Κατάσταση: </span>
-                    <button type="button" class="btn btn-default" ng-model="selectedStatus" data-html="1" data-toggle="true" bs-options="status.gr for status in statuses" data-animation="am-flip-x" data-placement="bottom" bs-select>
-                    </button>
-                    <button type="button" ng-show="selectedStatus.en=='RESOLVED'" class="btn btn-default" ng-model="selectedResolution" data-html="1" data-toggle="true" bs-options="resolution.gr for resolution in resolutions" data-animation="am-flip-x" data-placement="bottom"  bs-select>
-                    </button>
-                  </div>
-                  <div>
-                    <span class="title" >Σχόλιο: </span>
-                    <input ng-disabled="selectedStatus.en=='CONFIRMED'" type="text" class="form-control" ng-model="comment" placeholder="περιγραφή ...">
-                  </div>
-        				  <div class="btn btn-success" ng-show="panel.admin" ng-click="submit(panel,selectedStatus,selectedResolution,comment)" ><span class="glyphicon glyphicon-ok"></span> Επιβεβαίωση</div>
-        					<div class="btn btn-danger" ng-show="panel.admin" ng-click="resetPanel(panel)" ><span class="glyphicon glyphicon-remove"></span> Ακύρωση</div>
-                </form>
-                <br />
-				<hr />
-				  <h3>{{initial_desc}}</h3>
-				  <br />
-				  <img ng-src="{{panel_image}}" width="400px" alt="No image available" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div  class="col-md-6" ng-if="activePanel==-1">
-          <h3>Επισκόπηση Προβλημάτων ({{tabs.activeTab}})</h3>
-          <leaflet id="issuesmap" lf-center="ALLcenter" layers="layers" markers="ALLmarkers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
-        </div>
-
-
-        <div  class="col-md-6" ng-if="activePanel!=-1">
-          <h3  ng-bind="panel_issue"></h3>
-          <leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="650px"  style="color:black;"></leaflet>
-        </div>
-
-
-      </div>
-
+		<div class="container">
+			<div class="panel-group col-md-6" ng-model="activePanel" role="tablist" aria-multiselectable="true" bs-collapse>
+				<center>
+					<div class="checkbox">
+						<input ng-model="closedissues" type="checkbox" ng-click="refresh()"> Εμφάνιση ολοκληρωμένων προβλημάτων
+					</div>
+				</center>
+				<div class="panel panel-default" ng-repeat="panel in panels">					
+					<div class="panel-heading" role="tab" >
+						<h3 class="panel-title" ng-click="activePanel!=-1 && linkmap(panel)" >
+							<a bs-collapse-toggle>
+								<span ng-class="panel.icon" ng-style="panel.style" ></span> {{ panel.title }}
+							</a>
+						</h3>
+					</div>
+					<div class="panel-collapse" role="tabpanel" data-animation="am-collapse" bs-collapse-target>
+						<div class="panel-body">
+							<form name="editableForm" ng-hide="panel.admin">
+								<div>
+									<span class="title">Κατάσταση: </span>
+									<span>{{panel.status.gr}}</span>
+									<span ng-show="panel.status.en=='RESOLVED'"> ({{panel.resolution.gr}})</span>
+								</div>
+								<div>
+									<span class="title">Καταγραφη: </span>
+									<span >{{ panel.time }}</span>
+								</div>
+								<div>
+									<span class="title">Περιγραφή Υπηρεσίας: </span>
+									<span >{{ panel.comment }}</span>
+								</div>
+								<div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
+							</form>
+							<form name="editingForm"  ng-show="panel.admin">
+								<div>
+									<span class="title">Κατάσταση: </span>
+									<button type="button" class="btn btn-default" ng-model="selectedStatus" data-html="1" data-toggle="true" bs-options="status.gr for status in statuses" data-animation="am-flip-x" data-placement="bottom" bs-select></button>
+									<button type="button" ng-show="selectedStatus.en=='RESOLVED'" class="btn btn-default" ng-model="selectedResolution" data-html="1" data-toggle="true" bs-options="resolution.gr for resolution in resolutions" data-animation="am-flip-x" data-placement="bottom"  bs-select></button>
+								</div>
+								<div>
+									<span class="title" >Σχόλιο: </span>
+									<input ng-disabled="selectedStatus.en=='CONFIRMED'" type="text" class="form-control" ng-model="comment" placeholder="περιγραφή ...">
+								</div>
+								<div class="btn btn-success" ng-show="panel.admin" ng-click="submit(panel,selectedStatus,selectedResolution,comment)" ><span class="glyphicon glyphicon-ok"></span> Επιβεβαίωση</div>
+								<div class="btn btn-danger" ng-show="panel.admin" ng-click="resetPanel(panel)" ><span class="glyphicon glyphicon-remove"></span> Ακύρωση</div>
+							</form>
+							<br />
+							<hr />
+							<h3>{{initial_desc}}</h3>
+							<br />
+							<center>
+								<img ng-src="{{panel_image}}" height="400px" alt="{{initial_desc}}" />
+							</center>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div  class="col-md-6" ng-if="activePanel==-1">
+				<h3>Επισκόπηση Προβλημάτων ({{tabs.activeTab}})</h3>
+				<leaflet id="issuesmap" lf-center="ALLcenter" layers="layers" markers="ALLmarkers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
+			</div>
+			<div  class="col-md-6" ng-if="activePanel!=-1">
+				<h3  ng-bind="panel_issue"></h3>
+				<leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="750px"  style="color:black;"></leaflet>
+			</div>
+		</div>
     </body>
 </html>
