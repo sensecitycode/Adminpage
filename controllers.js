@@ -209,7 +209,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       // $scope.multipleActivePanels = [panel.ArrayID];
 
       $scope.statuses = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτέλεση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
-      $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Εσφαλμένη Αναφορά","en":"INVALID"},{"gr":"Μη αποκατάσταση / Απόρριψη από Δήμο","en":"WONTFIX"},{"gr":"Έχει ήδη αναφερθεί από άλλη φορά","en":"DUPLICATE"}];
+      $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Εσφαλμένη Αναφορά","en":"INVALID"},{"gr":"Μη αποκατάσταση / Απόρριψη από Δήμο","en":"WONTFIX"},{"gr":"Έχει ήδη αναφερθεί σε άλλο αίτημα","en":"DUPLICATE"}];
 	
       $scope.selectedStatus = panel.status;
       if (panel.resolution.gr !== undefined )
