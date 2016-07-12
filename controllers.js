@@ -122,7 +122,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       var pageload = function(callback) {
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
-      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","status": ["CONFIRMED", "IN_PROGRESS"],"include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      var params = {"product": "Δημος Πατρέων","order":"bug_id DESC","status": ["CONFIRMED", "IN_PROGRESS"],"include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
         {
           params.summary = issue_type;
@@ -161,6 +161,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             "new_status":"",
             "resolution":panelTitle.resolution,
             "new_resolution":"",
+            "component":value.component,
             "admin":false,
             "ArrayID":key,
             "comment":value[description],
@@ -210,7 +211,11 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
       $scope.statuses = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτέλεση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
       $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Εσφαλμένη Αναφορά","en":"INVALID"},{"gr":"Μη αποκατάσταση / Απόρριψη από Δήμο","en":"WONTFIX"},{"gr":"Έχει ήδη αναφερθεί σε άλλο αίτημα","en":"DUPLICATE"}];
-	
+      // $scope.components = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτέλεση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
+      $scope.components = ["Τμήμα επίλυσης προβλημάτων","ΤΜΗΜΑ ΚΑΘΑΡΙΟΤΗΤΑΣ","ΤΜΗΜΑ ΟΔΟΠΟΙΙΑΣ","ΤΜΗΜΑ ΦΩΤΙΣΜΟΥ"];
+
+
+      $scope.selectedComponent = panel.component;
       $scope.selectedStatus = panel.status;
       if (panel.resolution.gr !== undefined )
       {
@@ -243,7 +248,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       console.log($scope.comment);
     };
 
-    $scope.submit = function(panel,seldstatus,seldResolution,seldcomment){
+    $scope.submit = function(panel,seldstatus,seldResolution,seldcomment,seldcomponent){
 
 	    panel.status = seldstatus;
       if (panel.status.en == "RESOLVED")
@@ -255,18 +260,20 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
         panel.resolution = {"en":""};
       }
       panel.comment = seldcomment;
+      panel.component = seldcomponent;
       panel.admin=false;
       console.log("Panel changes to submit:");
       console.log(panel.status);
       console.log(panel.resolution);
       console.log(panel.comment);
+      console.log(panel.component);
 
 
       var bug_fieldname = CommentService.field(panel.status.en);
       // console.log(bug_fieldname);
       // console.log(panel);
 
-      var obj = { "ids":panel.id,"status":panel.status.en,"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων"};
+      var obj = { "ids":panel.id,"status":panel.status.en,"product": "Δημος Πατρέων","component": panel.component};
       if (panel.comment !== undefined && bug_fieldname!== undefined)
       {
         obj[bug_fieldname] = panel.comment;
@@ -277,7 +284,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       {
         obj.resolution = panel.resolution.en;
       }
-      // console.log(obj);
+      console.log(obj);
 
       var body  =
       {
@@ -305,7 +312,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
 
       var issue_type = Tab2BugzillaService.issue_type($scope.tabs.activeTab);
       // console.log(issue_type);
-      var params = {"product": "Δημος Πατρέων","component": "Τμήμα επίλυσης προβλημάτων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
+      var params = {"product": "Δημος Πατρέων","order":"bug_id DESC","include_fields":["component","cf_sensecityissue","status","id","alias","summary","creation_time","whiteboard","url","resolution"]};
       if (issue_type!="all")
       {
         params.summary = issue_type;
@@ -349,6 +356,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             "new_status":"",
             "resolution":panelTitle.resolution,
             "new_resolution":"",
+            "component":value.component,
             "admin":false,
             "ArrayID":key,
             "comment":value[description],
