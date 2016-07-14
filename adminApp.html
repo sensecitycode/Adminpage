@@ -77,7 +77,7 @@
 									<span >{{ panel.time }}</span>
 								</div>
 								<div>
-									<span class="title">Περιγραφή Υπηρεσίας: </span>
+									<span class="title">Σχόλια: </span>
 									<span >{{ panel.comment }}</span>
 								</div>
 								<div class="btn btn-warning" ng-hide="panel.admin" ng-click="admin(panel)" ><span class="glyphicon glyphicon-edit"></span> Διαχείριση</div>
@@ -87,13 +87,13 @@
 									<span class="title">Κατάσταση: </span>
 									<button type="button" class="btn btn-default" ng-model="selectedStatus" data-html="1" data-toggle="true" bs-options="status.gr for status in statuses" data-animation="am-flip-x" data-placement="bottom" bs-select></button>
 									<button type="button" ng-show="selectedStatus.en=='RESOLVED'" class="btn btn-default" ng-model="selectedResolution" data-html="1" data-toggle="true" bs-options="resolution.gr for resolution in resolutions" data-animation="am-flip-x" data-placement="bottom"  bs-select></button>
-                  <div ng-show="selectedStatus.en=='IN_PROGRESS'">
-                    <span class="title" >Ανάθεση σε: </span>
-                    <button type="button" class="btn btn-default" ng-model="selectedComponent" data-html="1" data-toggle="true" bs-options="component for component in components" data-animation="am-flip-x" data-placement="bottom"  bs-select></button>
-                  </div>
+									  <div ng-show="selectedStatus.en=='IN_PROGRESS'">
+										<span class="title" >Ανάθεση σε: </span>
+										<button type="button" class="btn btn-default" ng-model="selectedComponent" data-html="1" data-toggle="true" bs-options="component for component in components" data-animation="am-flip-x" data-placement="bottom"  bs-select></button>
+									  </div>
 								</div>
 								<div>
-									<span class="title" >Σχόλιο: </span>
+									<span class="title" >Σχόλια: </span>
 									<input ng-disabled="selectedStatus.en=='CONFIRMED'" type="text" class="form-control" ng-model="comment" placeholder="περιγραφή ...">
 								</div>
 								<div class="btn btn-success" ng-show="panel.admin" ng-click="submit(panel,selectedStatus,selectedResolution,comment,selectedComponent)" ><span class="glyphicon glyphicon-ok"></span> Επιβεβαίωση</div>
