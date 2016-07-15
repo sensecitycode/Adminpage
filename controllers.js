@@ -213,13 +213,13 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
       $scope.resolutions = [{"gr":"Αποκατάσταση","en":"FIXED"},{"gr":"Εσφαλμένη Αναφορά","en":"INVALID"},{"gr":"Μη αποκατάσταση / Απόρριψη από Δήμο","en":"WONTFIX"},{"gr":"Έχει ήδη αναφερθεί σε άλλο αίτημα","en":"DUPLICATE"}];
       // $scope.components = [{"gr":"Ανοιχτό","en":"CONFIRMED"},{"gr":"Σε εκτέλεση","en":"IN_PROGRESS"},{"gr":"Ολοκληρωμένο","en":"RESOLVED"}];
       $scope.components = ["Τμήμα επίλυσης προβλημάτων","ΤΜΗΜΑ ΚΑΘΑΡΙΟΤΗΤΑΣ","ΤΜΗΜΑ ΟΔΟΠΟΙΙΑΣ","ΤΜΗΜΑ ΦΩΤΙΣΜΟΥ"];
-		
-		
+
+
 		console.log("----------------------------------------------------");
 		console.log(panel.status);
       $scope.selectedComponent = panel.component;
       $scope.selectedStatus = panel.status;
-	 
+
       if (panel.resolution.gr !== undefined )
       {
         $scope.selectedResolution = {"gr":panel.resolution.gr,"en":panel.resolution.en};

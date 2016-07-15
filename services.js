@@ -63,7 +63,7 @@ appServices.factory('ToGrService', function() {
 							_icon = "glyphicon glyphicon-exclamation-sign";
 							break;
 						case "IN_PROGRESS":
-							_status = "Σε εκτελέση";
+							_status = "Σε εκτέλεση";
 							_style = {color:'orange'};
 							_icon = "glyphicon glyphicon-question-sign";
 							break;
@@ -75,13 +75,13 @@ appServices.factory('ToGrService', function() {
 									_resolution = "Αποκατάσταση";
 									break;
 								case "INVALID":
-									_resolution = "Μη αποδεκτό";
+									_resolution = "Εσφαλμένη Αναφορά";
 									break;
 								case "WONTFIX":
-									_resolution = "Μη αποκατάσταση";
+									_resolution = "Μη αποκατάσταση / Απόρριψη από Δήμο";
 									break;
 								case "DUPLICATE":
-									_resolution = "Διπλοεγγραφή";
+									_resolution = "Έχει ήδη αναφερθεί σε άλλο αίτημα";
 									break;
 							}
 							_status = "Ολοκληρωμένο";
