@@ -103,8 +103,8 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
           staticGarbage: {
             type: 'extraMarker',
             icon: 'fa-trash-o',
-            MarkerColor: 'green',
             prefix: 'fa',
+            markerColor: 'green',
             shape: 'square'
           },
           staticGarbageRecycle: {
