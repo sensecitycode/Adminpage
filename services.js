@@ -3,7 +3,7 @@ var appServices = angular.module('administrationApp.services', []);
 appServices.factory('EndPointService', function() {
 	  return {
 		  bugzillaURL: "http://api.sense.city:3001/bugs/search",
-			APIURL: "http://api.sense.city:3000/api"
+			APIURL: "http://api.sense.city:3000"
 	  };
 });
 
@@ -23,11 +23,47 @@ appServices.factory('BugService', function ( $resource, EndPointService) {
 
 appServices.factory('Issue2MapService', function ( $resource, EndPointService) {
     // console.log("DisplayIssues");
-    return $resource(EndPointService.APIURL+'/fullissue/:issueID',
+    return $resource(EndPointService.APIURL+'/api/fullissue/:issueID',
         {issueID:'@id'}
 			);
 });
 
+appServices.factory('FixPoints2MapService', function ( $resource, EndPointService) {
+    // console.log("DisplayFixPoints");
+    return $resource(EndPointService.APIURL+'/fix_point/:long/:lat/50/:type',
+        {
+					long:'@long',
+					lat:'@lat',
+					type:"@type"
+				}
+			);
+});
+
+appServices.factory('FixPointsMarkerService', function() {
+    return {
+        icon: function(fixPoint) {
+					var icon;
+					if (fixPoint.type=="garbage")
+					{
+						switch(fixPoint.notes[0].ANAKIKLOSI){
+							case "0":
+								icon = "staticGarbage";
+								break;
+							case "1":
+								icon = "staticGarbageRecycle";
+								break;
+							default:
+								break;
+						}
+					}
+					else
+					{
+						icon = "staticLighting";
+					}
+					return icon;
+        }
+    };
+});
 
 appServices.factory('ToGrService', function() {
     return {

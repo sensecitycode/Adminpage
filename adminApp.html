@@ -35,8 +35,10 @@
         <script src="js/angular-simple-logger.js"></script>
         <script src="js/ui-leaflet.min.js"></script>
         <script src="js/leaflet.awesome-markers.js"></script>
+        <script src="js/leaflet.extra-markers.js"></script>
         <link rel="stylesheet" href="css/leaflet.css" />
         <link rel="stylesheet" href="css/leaflet.awesome-markers.css">
+        <link rel="stylesheet" href="css/leaflet.extra-markers.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     </head>
     <body ng-app="administrationApp" ng-controller="adminController" ng-init="">
@@ -117,11 +119,13 @@
 			</div>
 			<div  class="col-md-6" ng-if="activePanel==-1">
 				<h3>Επισκόπηση Προβλημάτων ({{tabs.activeTab}})</h3>
-				<leaflet id="issuesmap" lf-center="ALLcenter" layers="layers" markers="ALLmarkers" defaults="defaults" height="550px"  style="color:black;"></leaflet>
+				<leaflet id="issuesmap" lf-center="ALLcenter" layers="layers" markers="ALLmarkers" defaults="defaults" height="550px"  style="color:black;">
+        </leaflet>
 			</div>
 			<div  class="col-md-6" ng-if="activePanel!=-1">
 				<h3  ng-bind="panel_issue"></h3>
-				<leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="750px"  style="color:black;"></leaflet>
+				<leaflet id="panelmap" lf-center="center" layers="layers" markers="markers" defaults="defaults" height="750px"  style="color:black;">
+        </leaflet>
 			</div>
 		</div>
     </body>

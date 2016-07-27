@@ -1,7 +1,7 @@
 var appControllers = angular.module('administrationApp.controllers', []);
 
 
-appControllers.controller('adminController',['$scope','$window','$http','EndPointService','BugService','ToGrService','CommentService','Issue2MapService','Tab2BugzillaService', function($scope,$window,$http,EndPointService,BugService,ToGrService,CommentService,Issue2MapService,Tab2BugzillaService){
+appControllers.controller('adminController',['$scope','$window','$http','EndPointService','BugService','ToGrService','CommentService','Issue2MapService','FixPoints2MapService','Tab2BugzillaService','FixPointsMarkerService', function($scope,$window,$http,EndPointService,BugService,ToGrService,CommentService,Issue2MapService,FixPoints2MapService,Tab2BugzillaService,FixPointsMarkerService){
     $scope.tabs = [
       {
         "title": "Γενικά",
@@ -64,6 +64,7 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
                 }
             }
         }
+
     };
 
     var redMarker = {
@@ -77,7 +78,9 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             type: 'awesomeMarker',
             prefix: 'fa',
             icon: 'trash-o',
-            markerColor: 'red'
+            markerColor: 'red',
+            shape: 'square'
+
           },
           "road-contructor": {
             type: 'awesomeMarker',
@@ -96,8 +99,31 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
             prefix: 'fa',
             icon: 'lightbulb-o',
             markerColor: 'red'
+          },
+          staticGarbage: {
+            type: 'extraMarker',
+            icon: 'fa-trash-o',
+            MarkerColor: 'green',
+            prefix: 'fa',
+            shape: 'square'
+          },
+          staticGarbageRecycle: {
+            type: 'extraMarker',
+            prefix: 'fa',
+            icon: 'fa-trash-o',
+            markerColor: 'cyan',
+            shape: 'square'
+          },
+          staticLighting: {
+            type: 'extraMarker',
+            prefix: 'fa',
+            icon: 'fa-lightbulb-o',
+            markerColor: 'yellow',
+            shape: 'square'
           }
+
       };
+
       $scope.$on("leafletDirectiveMarker.issuesmap.click", function(event, args){
           // Args will contain the marker name and other relevant information
           // console.log("Leaflet Click");
@@ -196,7 +222,29 @@ appControllers.controller('adminController',['$scope','$window','$http','EndPoin
         $scope.panel_image = issue.image_name;
         $scope.center = {lat:issue.loc.coordinates[1],lng:issue.loc.coordinates[0],zoom:17};
         $scope.markers = [{"lat":issue.loc.coordinates[1],"lng":issue.loc.coordinates[0],"icon":icons[panel.issuenameEN]}];
+
+        if (issue.issue == "garbage" || "lighting"){
+          var type;
+          if (issue.issue=="lighting")
+          {
+            type = "fotistiko";
+          } else {
+            type = issue.issue;
+          }
+
+          FixPoints2MapService.query({long:issue.loc.coordinates[0],lat:issue.loc.coordinates[1],type:type}, function(fix_points) {
+            angular.forEach(fix_points, function(value,key) {
+              var icon = FixPointsMarkerService.icon(value);
+              // console.log(icon);
+              // console.log(icons[icon]);
+              $scope.markers.push({"lat":value.loc.coordinates[1],"lng":value.loc.coordinates[0],"icon":icons[icon]});
+            });
+              });
+        }
+
       });
+
+
     };
 
     $scope.admin = function(panel){
